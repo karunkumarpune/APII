@@ -9,9 +9,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.newyear.R;
 import com.newyear.navigation_silder.MainActivity;
-
+import com.newyear.push_notification.SharedPrefManager;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -26,11 +27,11 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        //Save Device Token
+        SharedPrefManager.getInstance(getApplicationContext()).saveDeviceToken(FirebaseInstanceId.getInstance().getToken());
         setContentView(R.layout.activity_splash);
 
-      ImageView img= findViewById(R.id.img_splash);
-
-
+        ImageView img = findViewById(R.id.img_splash);
 
         Glide.with(this)
                 .load("http://www.karunkumar.in")

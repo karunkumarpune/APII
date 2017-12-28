@@ -10,9 +10,7 @@
         android:background="@color/colorPrimary"
         android:orientation="vertical">
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"
@@ -93,7 +91,7 @@
                         android:layout_height="30dp"
                         android:layout_marginEnd="10dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_christmas_tree" />
+                        android:src="@drawable/ic_rainy" />
 
                     <TextView
                         android:id="@+id/btn_1"
@@ -106,9 +104,9 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -132,10 +130,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/menu_scheduled"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -159,10 +157,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/invite_and_earn_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -185,10 +183,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/menu_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -212,10 +210,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/menu_setting2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -239,10 +237,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/contactus_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -266,10 +264,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/aboutus_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -293,10 +291,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/privacy_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -320,9 +318,9 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">

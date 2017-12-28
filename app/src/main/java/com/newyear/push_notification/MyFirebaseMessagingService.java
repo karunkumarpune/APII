@@ -2,6 +2,7 @@ package com.newyear.push_notification;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,135 +10,172 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.text.Html;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.newyear.R;
+import com.newyear.navigation_silder.MainActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-
-    private static final String TAG = "FCM Service";
-    int mNoti = 2019;
-    private final int NOTIFICATION_ID = 237;
-    private static int value = 0;
-    @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-
-        String title = "0";
-        String type = "0";
-        String message = "0";
-        String click_action = remoteMessage.getNotification().getClickAction();
-      //  if (remoteMessage.getData().size() > 0) {
-            type = remoteMessage.getData().get("type");
-            title = remoteMessage.getData().get("title");
-            message = remoteMessage.getData().get("message");
-            sendNotification(type, title, message,click_action);
-       // }
-
-
-
-    }
-
-        private void sendNotification(String type, String title, String message,String click_action ) {
-            Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_saraswati);
-
-            //AppMethod.setIntegerPreference(getApplicationContext(),NOTIFICATION_ID,)
-            Intent intent = new Intent(click_action);
-            intent.putExtra("type", type);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, value, intent, PendingIntent.FLAG_ONE_SHOT);
-            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                   // .setLargeIcon(icon)
-                    .setContentTitle(title)
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                    .setContentText(message)
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(value, notificationBuilder.build());
-            value++;
-        }
-
-
-
-
-
-
-
-
-
-       /* NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_stat_logo);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setClass(this, TrackDriverActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        builder.setContentIntent(pendingIntent);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_car));
-        builder.setContentTitle("Notifications Title");
-        builder.setContentText("");
-        builder.setSubText("");
-        builder.setAutoCancel(true);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        // Will display the notification in the notification bar
-        notificationManager.notify(1, builder.build());*/
-
-}
-
-   /* private static final String TAG = "MyFirebaseMsgService";
+    private static final String TAG = "FirebaseMessageService";
+    public static int NOTIFICATION_ID = 1;
+    Bitmap bitmap;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        Log.d(TAG, "From: " + remoteMessage.getFrom());
+
         if (remoteMessage.getData().size() > 0) {
-            Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
-            try {
-                JSONObject json = new JSONObject(remoteMessage.getData().toString());
-                sendPushNotification(json);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception: " + e.getMessage());
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+            String title = remoteMessage.getData().get("title");
+            String message = remoteMessage.getData().get("message");
+            String click_action_open = remoteMessage.getData().get("click_action");
+            String action_url = remoteMessage.getData().get("action_url");
+            String url_setPackage = remoteMessage.getData().get("setPackage");
+
+
+            if (click_action_open.equals("1")) {
+                click_action_open1(title, message, "https://play.google.com/store/apps/details?id=" + action_url, 1, "");
+            }
+            if (click_action_open.equals("2")) {
+                click_action_open1(title, message, action_url, 1, "");
+            }
+            if (click_action_open.equals("3")) {
+                click_action_open1(title, message, action_url, 2, url_setPackage);
+            }
+            if (click_action_open.equals("4")) {
+                notificationWithMessgae(title, message);
+            }
+            if (click_action_open.equals("5")) {
+                Bitmap bitmap = getBitmapFromURL(action_url);
+                notificationWithImage(bitmap, title, message);
             }
         }
+
     }
 
-    //this method will display the notification
-    //We are passing the JSONObject that is received from
-    //firebase cloud messaging
-    private void sendPushNotification(JSONObject json) {
-        //optionally we can display the json into log
-        Log.e(TAG, "Notification JSON " + json.toString());
-        try {
-            //getting the json data
-            JSONObject data = json.getJSONObject("data");
 
-            //parsing json data
-            String title = data.getString("title");
-            String message = data.getString("message");
-            String imageUrl = data.getString("image");
-
-            //creating MyNotificationManager object
-            MyNotificationManager mNotificationManager = new MyNotificationManager(getApplicationContext());
-
-            //creating an intent for the notification
-            Intent intent = new Intent(getApplicationContext(), TrackDriverActivity.class);
-
-            //if there is no image
-            if(imageUrl.equals("null")){
-                //displaying small notification
-                mNotificationManager.showSmallNotification(title, message, intent);
-            }else{
-                //if there is an image
-                //displaying a big notification
-                mNotificationManager.showBigNotification(title, message, imageUrl, intent);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Json Exception: " + e.getMessage());
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
+    private void click_action_open1(String title, String message, String link, int condition, String url_setPackage) {
+        PendingIntent pendingIntent;
+        Intent intent = null;
+        if (condition == 1) {
+            intent = new Intent(android.content.Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setData(Uri.parse(link));
         }
-    }*/
+        if (condition == 2) {
+            try {
+                intent = new Intent(Intent.ACTION_SEARCH);
+                intent.setPackage(url_setPackage);
+                intent.putExtra("query", link);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            } catch (ActivityNotFoundException ex) {
+                Toast.makeText(getApplicationContext(), "App not installed", Toast.LENGTH_SHORT);
+            }
+        }
 
+
+        pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this, "")
+                .setAutoCancel(true)
+                .setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setSound(defaultSoundUri)
+                .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                .setSmallIcon(R.mipmap.ic_saraswati)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.splash))
+                .setContentText(message);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (NOTIFICATION_ID > 1073741824) {
+            NOTIFICATION_ID = 0;
+        }
+        notificationManager.notify(NOTIFICATION_ID++, mNotifyBuilder.build());
+    }
+
+    private void notificationWithImage(Bitmap bitmap, String title, String message) {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+        bigPictureStyle.setBigContentTitle(title);
+        bigPictureStyle.setSummaryText(Html.fromHtml(message).toString());
+        bigPictureStyle.bigPicture(bitmap);
+        NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this, "")
+                .setAutoCancel(true)
+                .setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setSound(defaultSoundUri)
+                .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                .setStyle(bigPictureStyle)
+                .setSmallIcon(R.mipmap.ic_saraswati)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.splash))
+                .setContentText(message);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (NOTIFICATION_ID > 1073741824) {
+            NOTIFICATION_ID = 0;
+        }
+        notificationManager.notify(NOTIFICATION_ID++, mNotifyBuilder.build());
+    }
+
+    private void notificationWithMessgae(String title, String message) {
+
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this, "")
+                .setAutoCancel(true)
+                .setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setSound(defaultSoundUri)
+                .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                .setSmallIcon(R.mipmap.ic_saraswati)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.splash))
+                .setContentText(message);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (NOTIFICATION_ID > 1073741824) {
+            NOTIFICATION_ID = 0;
+        }
+        notificationManager.notify(NOTIFICATION_ID++, mNotifyBuilder.build());
+    }
+
+    public Bitmap getBitmapFromURL(String strURL) {
+        try {
+            URL url = new URL(strURL);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}

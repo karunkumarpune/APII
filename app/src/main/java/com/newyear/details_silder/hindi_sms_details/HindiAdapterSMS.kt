@@ -50,7 +50,7 @@ class HindiAdapterSMS(private val list: ArrayList<Hindi_Result>) : RecyclerView.
         private var apiInterface: ApiInterface2? = null
 
         init {
-            apiInterface = ApiUtils.getAPIService2();
+            apiInterface = ApiUtils.getAPIService2()
         }
         //layout contentLayout
         private var coordinatorLayout: CoordinatorLayout = itemView.findViewById<View>(R.id.main_content) as CoordinatorLayout
@@ -73,28 +73,32 @@ class HindiAdapterSMS(private val list: ArrayList<Hindi_Result>) : RecyclerView.
                 if(s == "") {
                     Validation()
                 }else
-                ShareText("com.facebook.lite",model.smsHindi!!,"facebook")
+                    PostData(s, "facebook-Hindi")
+                ShareText("com.facebook.lite", model.smsHindi!!, "facebook", s)
             })
             share_whatapp.setOnClickListener({
                 val s=itemView.edit_name.text.toString()
                 if(s == "") {
                     Validation()
                 }else
-                ShareText("com.whatsapp",model.smsHindi!!,"Whatsapp")
+                    PostData(s, "whatapp-Hindi")
+                ShareText("com.whatsapp", model.smsHindi!!, "whatapp", s)
             })
             share_email.setOnClickListener({
                 val s=itemView.edit_name.text.toString()
                 if(s == "") {
                     Validation()
                 }else
-                ShareText("com.google.android.gm",model.smsHindi!!,"Gmail")
+                    PostData(s, "Gmail-Hindi")
+                ShareText("com.google.android.gm", model.smsHindi!!, "Gmail", s)
             })
             share_sms.setOnClickListener({
                 val s=itemView.edit_name.text.toString()
                 if(s == "") {
                     Validation()
                 }else
-                ShareText("com.android.mms",model.smsHindi!!,"SMS")
+                    PostData(s, "sms-Hindi")
+                ShareText("com.android.mms", model.smsHindi!!, "android.mms", s)
             })
 
 
@@ -103,30 +107,31 @@ class HindiAdapterSMS(private val list: ArrayList<Hindi_Result>) : RecyclerView.
                 if(s == "") {
                     Validation()
                 }else {
+                    PostData(s, "Other-Hindi")
                     val sendIntent = Intent()
                     sendIntent.action = Intent.ACTION_SEND
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, model.smsHindi!!)
-                    //  sendIntent.putExtra("MyKey", "This is second my text to send using my key.")
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, model.smsHindi!! + " \n \n " + s)
+                    sendIntent.putExtra("MyKey", s)
                     sendIntent.type = "text/plain"
-                    context.startActivity(Intent.createChooser(sendIntent, "Send"))
+                    context.startActivity(Intent.createChooser(sendIntent, s))
                 } })
         }
 
         private fun Validation(){
-            snackbar = Snackbar.make(this.coordinatorLayout!!, "Please enter name...", Snackbar.LENGTH_SHORT)
+            snackbar = Snackbar.make(this.coordinatorLayout, "Please enter name...", Snackbar.LENGTH_SHORT)
             val sbView = snackbar!!.view
             val textView = sbView.findViewById<TextView>(android.support.design.R.id.snackbar_text)
             textView.setTextColor(Color.CYAN)
             snackbar!!.show()
         }
         private fun PostData(name:String,type:String){
-            val android_id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID);
-            val  android_date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().time);
+            val android_id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+            val android_date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().time)
 
             apiInterface!!.ShareName(android_id,name,type,android_date).enqueue(object:retrofit2.Callback<JSONObject>{
                 override fun onResponse(call: Call<JSONObject>?, response: Response<JSONObject>?) {
                     if(response!!.isSuccessful) {
-                        Log.d("TAGS", ": - response : " +response.body().toString())
+                        Log.d("TAGS", ": - response  Hindi: " + response.body().toString())
                     }
                 }
                 override fun onFailure(call: Call<JSONObject>?, t: Throwable?) {
@@ -136,16 +141,16 @@ class HindiAdapterSMS(private val list: ArrayList<Hindi_Result>) : RecyclerView.
             })
         }
 
-        private fun ShareText(package_name: String, name: String, name_type: String) {
+        private fun ShareText(package_name: String, message: String, name_type: String, name: String) {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
             intent.`package` = package_name
-            intent.putExtra(Intent.EXTRA_TEXT,name)
+            intent.putExtra(Intent.EXTRA_TEXT, message + " \n \n " + name)
             try {
                 context.startActivity(intent)
             } catch (ex: android.content.ActivityNotFoundException) {
 
-                snackbar = Snackbar.make(this.coordinatorLayout!!, name_type + " have not been installed.", Snackbar.LENGTH_SHORT)
+                snackbar = Snackbar.make(this.coordinatorLayout, name_type + " have not been installed.", Snackbar.LENGTH_SHORT)
                 val sbView = snackbar!!.view
                 val textView = sbView.findViewById<TextView>(android.support.design.R.id.snackbar_text)
                 textView.setTextColor(Color.YELLOW)

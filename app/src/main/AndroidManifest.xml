@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
 
 
     <application
@@ -15,12 +18,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:largeHeap="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".splash_screen.SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,10 +31,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".navigation_silder.MainActivity"
+      <!--  <activity android:name=".navigation_silder.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|screenSize" />
-
+-->
 
         <!--  Push Notification- -->
 
@@ -47,9 +50,13 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".push_notification.Notification">
+        <!--Open Activity-->
+        <activity android:name="com.newyear.navigation_silder.MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
             <intent-filter>
-                <action android:name="com.newyear.Notification" />
+                <action android:name="com.newyear.navigation_silder.MainActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -63,16 +70,16 @@
         </receiver>
 
         <activity android:name=".details_silder.hindi_sms_details.DetailsEnglishSMS_Silder"
-            android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".details_silder.hindi_sms_details.DetailsHindiSMS_Silder"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".details_silder.hindi_sms_details.DetailsHindiSMS_Silder"
             android:configChanges="orientation|screenSize"
-            />
-        <activity android:name=".details_silder.avatar_details.DetailsAavtarSilder"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".details_silder.avatar_details.DetailsAavtarSilder"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
 
 
         <activity android:name=".christmas.ChristmasActivity"

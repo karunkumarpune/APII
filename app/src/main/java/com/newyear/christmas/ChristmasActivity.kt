@@ -24,10 +24,6 @@ class ChristmasActivity : AppCompatActivity() {
     private var viewPager: ViewPager? = null
     private var option = 0
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     private fun setToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -54,7 +50,7 @@ class ChristmasActivity : AppCompatActivity() {
 
         when(option){
             1->{
-                set_pic_toolbar.setImageResource(R.drawable.ic_christmas_tree)
+                set_pic_toolbar.setImageResource(R.drawable.ic_rainy)
                 set_title_toolbar.text=resources.getString(R.string.option_txt_1)
             }
             2->{

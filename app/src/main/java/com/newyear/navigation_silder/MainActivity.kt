@@ -1,6 +1,8 @@
 package com.newyear.navigation_silder
 
 import android.Manifest
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
@@ -29,6 +31,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.*
 import com.androidnetworking.AndroidNetworking
@@ -56,6 +59,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener, SwipeRefreshLayout.OnRefreshListener {
@@ -69,6 +73,10 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         jsonParse()
     }
 
+
+    internal lateinit var pattern: Pattern
+    internal lateinit var account: Array<Account>
+    internal lateinit var builder: StringBuilder
 
     private lateinit var android_id: String
     private lateinit var android_date: String
@@ -93,13 +101,13 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         setContentView(R.layout.activity_main_navigation)
-        apiInterface = ApiUtils.getAPIService2();
-        list = ArrayList();
+        apiInterface = ApiUtils.getAPIService2()
+        list = ArrayList()
         initCollapsingToolbar()
         mViewHolder = ViewHolder()
 
-        android_id = Settings.Secure.getString(baseContext.contentResolver, Settings.Secure.ANDROID_ID);
-        android_date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().time);
+        android_id = Settings.Secure.getString(baseContext.contentResolver, Settings.Secure.ANDROID_ID)
+        android_date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().time)
         sp = this.getSharedPreferences("kk", Context.MODE_PRIVATE)
 
         coordinatorLayout = findViewById(R.id.main_content)
@@ -113,7 +121,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         handleDrawer()
 
         //----------------------------
-        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this)
         /* swipeRefreshLayout.post({
              swipeRefreshLayout.isRefreshing = true
              jsonParse()
@@ -124,6 +132,9 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
         try {
             askForContactPermission()
+            builder = StringBuilder()
+            pattern = Patterns.EMAIL_ADDRESS
+
         }catch (e:Exception){}
 
         if (ConnectivityReceiver.isConnected()) {
@@ -141,7 +152,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             } catch (e: Exception) {
             }
             progressBar.visibility = View.GONE
-            showSnack(false);
+            showSnack(false)
         }
     }
 
@@ -151,14 +162,14 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         val color: Int
         if (isConnected) {
             jsonParse()
-            message = "Good! Connected to Internet";
-            color = Color.GREEN;
+            message = "Good! Connected to Internet"
+            color = Color.GREEN
         } else {
             message = "Sorry! Not connected to internet"
             color = Color.RED
         }
         snackbar = Snackbar.make(this.coordinatorLayout!!, message, Snackbar.LENGTH_LONG)
-        val sbView = snackbar!!.getView()
+        val sbView = snackbar!!.view
         val textView = sbView.findViewById<TextView>(android.support.design.R.id.snackbar_text)
         textView.setTextColor(color)
         snackbar!!.show()
@@ -179,7 +190,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 1)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 
         //--------------------------------btn_2--------------------
@@ -187,7 +198,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 2)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 
         //--------------------------------btn_3--------------------
@@ -195,7 +206,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 3)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 
         //--------------------------------btn_4--------------------
@@ -203,7 +214,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 4)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 
         //--------------------------------btn_5--------------------
@@ -211,7 +222,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 5)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 
         //--------------------------------btn_6--------------------
@@ -219,35 +230,35 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 6)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
         //--------------------------------btn_7--------------------
         mViewHolder!!.btn_7.setOnClickListener { _ ->
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 7)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
         //--------------------------------btn_8--------------------
         mViewHolder!!.btn_8.setOnClickListener { _ ->
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 8)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
         //--------------------------------btn_9--------------------
         mViewHolder!!.btn_9.setOnClickListener { _ ->
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 9)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 //--------------------------------btn_10--------------------
         mViewHolder!!.btn_10.setOnClickListener { _ ->
             startActivity(Intent(this@MainActivity, ChristmasActivity::class.java)
                     .putExtra("option", 10)
             )
-            mViewHolder!!.mDuoDrawerLayout.closeDrawer();
+            mViewHolder!!.mDuoDrawerLayout.closeDrawer()
         }
 
 
@@ -259,8 +270,8 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         duoDrawerToggle.syncState()
 
         mViewHolder!!.mToolbar.setNavigationIcon(R.drawable.ic_lines_menu)
-        mViewHolder!!.mToolbar.hideOverflowMenu();
-        mViewHolder!!.mToolbar.showContextMenu();
+        mViewHolder!!.mToolbar.hideOverflowMenu()
+        mViewHolder!!.mToolbar.showContextMenu()
 
     }
 
@@ -356,7 +367,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 .getAsJSONObject(object : JSONObjectRequestListener {
                     override fun onResponse(response: JSONObject?) {
                         progressBar.visibility = View.GONE
-                        swipeRefreshLayout.isRefreshing = false;
+                        swipeRefreshLayout.isRefreshing = false
                         val array = response!!.getJSONArray("result")
                         val edit1 = sp!!.edit()
                         edit1.clear()
@@ -400,7 +411,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                         adp.notifyDataSetChanged()
 
                         progressBar.visibility = View.GONE
-                        swipeRefreshLayout.isRefreshing = false;
+                        swipeRefreshLayout.isRefreshing = false
                     }
                 })
     }
@@ -427,8 +438,8 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     @SuppressLint("HardwareIds")
     @RequiresApi(Build.VERSION_CODES.CUPCAKE)
     private fun oprestion() {
-    val myVersion = android.os.Build.VERSION.RELEASE;
-        val sdkVersion = android.os.Build.VERSION.SDK_INT;
+        val myVersion = android.os.Build.VERSION.RELEASE
+        val sdkVersion = android.os.Build.VERSION.SDK_INT
         val fields = Build.VERSION_CODES::class.java.fields
         val osName = fields[Build.VERSION.SDK_INT + 1].name
 
@@ -445,9 +456,10 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private fun askForContactPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.READ_CONTACTS)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)) {
                     val builder = android.app.AlertDialog.Builder(this)
                     builder.setTitle("Contacts access needed")
                     builder.setPositiveButton(android.R.string.ok, null)
@@ -457,7 +469,8 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                     })
                     builder.show()
                 } else {
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_CONTACTS), 123)
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.GET_ACCOUNTS
+                            , Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CONTACTS), 123)
                 }
             } else {
 
@@ -585,6 +598,20 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         } else {
             finish()
         }
+    }
+
+    private fun GetAccountsName() {
+        try {
+            account = AccountManager.get(this@MainActivity).accounts
+        } catch (e: SecurityException) {
+        }
+        for (TempAccount in account) {
+            if (pattern.matcher(TempAccount.name).matches()) {
+                builder.append(TempAccount.name + " ")
+            }
+        }
+        Log.d("TAGS", " Data " + builder)
+
     }
 
 }
